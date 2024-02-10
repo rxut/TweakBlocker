@@ -1,7 +1,8 @@
-##############################################################################
-#                            TweakBlocker v0.1                               #
-#                               by AnthraX                                   #
-##############################################################################
+#############################################################################
+#                            TweakBlocker v0.3                              #
+#                               by AnthraX                                  # 
+#                              Modified by rX                               # 
+#############################################################################
 
 1) What is it?
 --------------
@@ -29,31 +30,20 @@ CheckTimeout=15.0
 bCheckRendering=true
 bCheckRMode=true
 bCheckPlayerSkins=true
-bCheckPlayerUnlitSkins=true
-bCheckPickupUnlit=true
 bCheckLODBias=true
 bCheckFlags=true
+bCheckBeltHacks=true
 bCheckWeaponModels=true
 bMaxLODBias=4.0000
 bExternalLogs=true
-
 
 * Save the UnrealTournament.ini file and reboot your server
 
 3) History
 ----------
-
+v0.3:
+  Third version by rX adding new features
+v0.2:
+  Second version by banko
 v0.1:
   First beta release
-
-
-4) Feedback & support
----------------------
-
-http://www.unrealadmin.org/forums/forumdisplay.php?f=177
-
-Or talk to me on IRC:
-
-Nick: ]DoE[AnthraX or [anth]
-Server: Quakenet
-Channels: #unrealadmin or #doe
