@@ -48,7 +48,7 @@ function xxInitRI(TBActor zzA, TBSettings zzS)
     }
 
     // Determine check start time
-    SetTimer(zzActor.CheckInterval+RandRange(1,10),false);
+    SetTimer(RandRange(10,15),false);
     //SetTimer(5.0,false);
 }
 
@@ -204,10 +204,18 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
             xxAddTweak(zzTweaksReply,"Hidden Lightbox Tweak");
         }
 
+        // Player Spawn Joystick Hack
+
         if (xxGetToken(xxGetRenderProperties(class'PlayerStart'), 1) == "0")
         {
             xxAddTweak(zzTweaksReply,"Player Spawn Hack");
         }
+
+        // Shield Belt Render Tweak Alternative Check
+     // if (int(xxGetToken(xxGetRenderProperties(class'UT_ShieldBeltEffect'), 7)) == zzS.zzShieldBeltEffectStyle)
+     // {
+     //     xxAddTweak(zzTweaksReply,"Shield Belt Effect Tweak");
+     // }
 
         zzTestsExecuted++;
     }
@@ -217,8 +225,8 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
     {   
         foreach Level.AllActors(class'Weapon', zzWeapon)
         {
-            // Check if the owner of the weapon has UDamage, UT_Invisibility or UT_ShieldBelt in their inventory
-            if (zzWeapon.Owner != None) // Add this line
+            // Check if the owner of the weapon has UDamage, UT_Invisibility or UT_ShieldBelt in their inventory    
+            if (zzWeapon.Owner != None)
             {
                 for (inv = PlayerPawn(zzWeapon.Owner).Inventory; inv != none; inv = inv.Inventory)
                 {
@@ -236,7 +244,7 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                     }
                 }
 
-                // If the player does not have UDamage, UT_Invisibility or UT_ShieldBelt, then perform the check
+                // If the player does not have UDamage, UT_Invisibility or UT_ShieldBelt, then perform the check to avoid false positives
                 if (!hasUDamage && !hasInvisibility && !hasShieldBelt)
                 {
                     zzReply = xxGetTextureProperties(zzWeapon);
@@ -339,16 +347,21 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         zzTestsExecuted++;
     }
     
+    if (xxGetToken(xxGetRenderProperties(class'PlayerStart'), 1) == "0")
+        {
+            xxAddTweak(zzTweaksReply,"Player Spawn Hack");
+        }
+
     // Belt hacks
     if (zzA.bCheckBeltHacks)
     {
         foreach Level.AllActors(class'UT_ShieldBeltEffect', zzSBE)
-         {
+            {
                 if (zzSBE != none && zzSBE.Style != zzS.zzShieldBeltEffectStyle)
                 {
                     xxAddTweak(zzTweaksReply, "Shield Belt Effect Tweak");
                 }
-         }
+            }
          zzTestsExecuted++;
     }
 
@@ -641,12 +654,12 @@ simulated function string xxGetRenderProperties(Object zzO)
     else if (zzO.IsA('Actor'))
     {
         zzA = Actor(zzO);
-        return string(zzA.Mesh)$chr(9)$int(zzA.bHidden)$chr(9)$zzA.DrawScale$chr(9)$zzA.DrawType$chr(9)$zzA.ScaleGlow$chr(9)$zzA.VisibilityRadius$chr(9)$zzA.VisibilityHeight;
+        return string(zzA.Mesh)$chr(9)$int(zzA.bHidden)$chr(9)$zzA.DrawScale$chr(9)$zzA.DrawType$chr(9)$zzA.ScaleGlow$chr(9)$zzA.VisibilityRadius$chr(9)$zzA.VisibilityHeight$chr(9)$zzA.Style; // Added Style
     }
     else if (zzO.IsA('Class'))
     {
         zzC = class<Actor>(zzO);
-        return string(zzC.default.Mesh)$chr(9)$int(zzC.default.bHidden)$chr(9)$zzC.default.DrawScale$chr(9)$zzC.default.DrawType$chr(9)$zzC.default.ScaleGlow$chr(9)$zzC.default.VisibilityRadius$chr(9)$zzC.default.VisibilityHeight;
+        return string(zzC.default.Mesh)$chr(9)$int(zzC.default.bHidden)$chr(9)$zzC.default.DrawScale$chr(9)$zzC.default.DrawType$chr(9)$zzC.default.ScaleGlow$chr(9)$zzC.default.VisibilityRadius$chr(9)$zzC.default.VisibilityHeight$chr(9)$zzC.default.Style; // Added Style
     }
 }
 
