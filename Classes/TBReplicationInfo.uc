@@ -380,13 +380,6 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         zzTestsExecuted++;
     }
 
-    // Player Spawnpoint Hack
-
-    if (xxGetToken(xxGetRenderProperties(class'PlayerStart'), 1) == "0")
-        {
-            xxAddTweak(zzTweaksReply,"Player Spawn Hack");
-        }
-
     // Shield Belt Effect Hacks
     if (zzA.bCheckBeltHacks)
     {
