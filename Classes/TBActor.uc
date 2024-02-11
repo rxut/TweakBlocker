@@ -22,8 +22,9 @@ var config string LogPath;          // Folder to log to
 var config string LogPrefix;        // Tag
 var config bool bCheckLODBias; // Check lodbias
 var config float bMaxAllowedLODBias;   // Max allowed lodbias
-var config bool bCheckWeaponModels; // Check weapon models
-var config bool bCheckBeltHacks;
+var config bool bCheckWeaponModels; // Check all weapon models
+var config bool bCheckBeltHacks; // Check UT_ShieldBeltEffect tweaks
+var config bool bCheckPowerUps; // Check UDamage, UT_Invisibility and Shield Belt tweaks
 var string lastLODBias;
 
 // =============================================================================
@@ -32,7 +33,7 @@ var string lastLODBias;
 replication
 {
     reliable if (ROLE == ROLE_AUTHORITY)
-        bCheckRendering, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckWeaponModels;
+        bCheckRendering, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckPowerUps, bCheckWeaponModels;
 }
 
 // =============================================================================
@@ -127,6 +128,7 @@ defaultproperties
     bCheckLODBias=true
     bCheckFlags=true
     bCheckWeaponModels=true
+    bCheckPowerUps=true
     bCheckBeltHacks=true
     bExternalLogs=true
     bMaxAllowedLODBias=4.0000

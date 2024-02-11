@@ -158,8 +158,9 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
     local UT_ShieldBeltEffect zzSBE;
     local TBPlayerDisplayProperties zzPlayerProps;
     local Weapon zzWeapon;
-    local Inventory inv;
-    local bool hasUDamage, hasInvisibility, hasShieldBelt;
+    local UT_ShieldBelt zzshieldBelt;
+    local UDamage zzUDamage;
+    local UT_Invisibility zzInvisibility;
 
     zzTweaksFound = 0;
 
@@ -204,11 +205,11 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
             xxAddTweak(zzTweaksReply,"Hidden Lightbox Tweak");
         }
 
-        // Player Spawn Joystick Hack
+        // Visible Spawn Point Hack
 
         if (xxGetToken(xxGetRenderProperties(class'PlayerStart'), 1) == "0")
         {
-            xxAddTweak(zzTweaksReply,"Player Spawn Hack");
+            xxAddTweak(zzTweaksReply,"Player Spawn Point Hack");
         }
 
         // Shield Belt Render Tweak Alternative Check
@@ -220,48 +221,73 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         zzTestsExecuted++;
     }
 
-    // Check weapon models for bMeshEnviroMap and texture hacks
+    // Check Weapons for bMeshEnviroMap, DrawScale and Texture hacks
     if (zzA.bCheckWeaponModels)
-    {   
+    { 
         foreach Level.AllActors(class'Weapon', zzWeapon)
-        {
-            // Check if the owner of the weapon has UDamage, UT_Invisibility or UT_ShieldBelt in their inventory    
-            if (zzWeapon.Owner != None)
+        { 
+            // Skip the checks if the weapon is modified by UT_Invisibility or UDamage
+            if (!(zzWeapon.Style == ERenderStyle.STY_Translucent && (zzWeapon.Texture == FireTexture'Unrealshare.Belt_fx.Invis' || zzWeapon.Texture == FireTexture'UnrealShare.Belt_fx.UDamageFX')))
             {
-                for (inv = PlayerPawn(zzWeapon.Owner).Inventory; inv != none; inv = inv.Inventory)
-                {
-                    if (inv.IsA('UDamage'))
-                    {
-                        hasUDamage = true;
-                    }
-                    else if (inv.IsA('UT_Invisibility'))
-                    {
-                        hasInvisibility = true;
-                    }
-                    else if (inv.IsA('UT_ShieldBelt'))
-                    {
-                        hasShieldBelt = true;
-                    }
-                }
+                zzReply = xxGetTextureProperties(zzWeapon);
 
-                // If the player does not have UDamage, UT_Invisibility or UT_ShieldBelt, then perform the check to avoid false positives
-                if (!hasUDamage && !hasInvisibility && !hasShieldBelt)
-                {
-                    zzReply = xxGetTextureProperties(zzWeapon);
-
-                    if (xxGetToken(zzReply, 5) == "1")
+                if (xxGetToken(zzReply, 5) == "1")
                     {
                         if (zzWeapon.bMeshEnviroMap == True)
                         {
-                            xxAddTweak(zzTweaksReply,"Weapon Texture Hack");
+                            xxAddTweak(zzTweaksReply,"Weapon Texture Tweak");
                         }
                     }
-                }
             }
         }
         zzTestsExecuted++;
     }
-            
+
+    if (zzA.bCheckPowerUps)
+    {
+
+        foreach Level.AllActors(class'UT_ShieldBelt', zzShieldBelt)
+        {
+            if (zzShieldBelt != none && zzShieldBelt.DrawScale != zzS.zzShieldBeltDrawScale)
+            {
+                    xxAddTweak(zzTweaksReply,"Belt DrawScale Tweak");
+            }
+                
+            if (zzShieldBelt != none && zzShieldBelt.DrawType != zzS.zzShieldBeltDrawType)
+            {
+                    xxAddTweak(zzTweaksReply,"Belt DrawType Tweak");
+            }
+        }
+
+        foreach Level.AllActors(class'UDamage', zzUDamage)
+        {
+            if (zzUDamage != none && zzUDamage.DrawScale != zzS.zzUDamageDrawScale)
+            {
+                xxAddTweak(zzTweaksReply,"UDamage DrawScale Tweak");
+            }
+
+            if (zzUDamage != none && zzUDamage.DrawType != zzS.zzUDamageDrawType)
+            {
+                xxAddTweak(zzTweaksReply,"UDamage DrawType Tweak");
+            }
+        }
+
+        foreach Level.AllActors(class'UT_Invisibility', zzInvisibility)
+        {
+            if (zzInvisibility != none && zzInvisibility.DrawScale != zzS.zzInvisibilityDrawScale)
+            {
+                xxAddTweak(zzTweaksReply,"Invisibility DrawScale Tweak");
+            }
+      
+            if (zzInvisibility != none && zzInvisibility.DrawType != zzS.zzInvisibilityDrawType)
+            {
+                xxAddTweak(zzTweaksReply,"Invisibility DrawType Tweak");
+            }
+        }
+
+        zzTestsExecuted++;
+    }
+
     // Check for skin tweaks (skinhacks/brightskins)
     if (zzA.bCheckPlayerSkins)
     {
@@ -275,7 +301,7 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                 zzPlayerProps = zzProps.xxGetPlayerProperties(zzPP);
 
             
-              if (zzProps != none)
+            if (zzProps != none)
                 zzPlayerProps = zzProps.xxGetPlayerProperties(zzPP);
         
              // Player LODBias Check
@@ -314,11 +340,18 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                 if (zzPlayerProps == none || (zzPlayerProps != none && zzPlayerProps.zzOwnerLightRadius != zzPP.LightRadius))
                     xxAddTweak(zzTweaksReply,"Player Glow Tweak ("$zzPP.LightRadius$")");
             }
-            // Check For DrawScale changes
-            if (zzPP.DrawScale != zzPP.default.DrawScale)
+            
+            // Check Player Model DrawScale
+            if (zzPP.DrawScale != zzS.zzPPDefaultDrawScale)
             {
-                if (zzPlayerProps == none || (zzPlayerProps != none && zzPlayerProps.zzOwnerDrawScale != zzPP.DrawScale))
-                    xxAddTweak(zzTweaksReply,"Player Draw Scale Tweak ("$zzPP.DrawScale$")");
+                xxAddTweak(zzTweaksReply,"Player DrawScale Tweak");
+            }
+
+            // Check Player Model Fatness
+
+            if (zzPP.Fatness != zzS.zzPPDefaultFatness)
+            {
+                xxAddTweak(zzTweaksReply,"Player Size Tweak");
             }
         }
 
@@ -346,13 +379,15 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
 
         zzTestsExecuted++;
     }
-    
+
+    // Player Spawnpoint Hack
+
     if (xxGetToken(xxGetRenderProperties(class'PlayerStart'), 1) == "0")
         {
             xxAddTweak(zzTweaksReply,"Player Spawn Hack");
         }
 
-    // Belt hacks
+    // Shield Belt Effect Hacks
     if (zzA.bCheckBeltHacks)
     {
         foreach Level.AllActors(class'UT_ShieldBeltEffect', zzSBE)
@@ -361,7 +396,23 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                 {
                     xxAddTweak(zzTweaksReply, "Shield Belt Effect Tweak");
                 }
+
+                if (zzSBE != none && zzSBE.DrawScale != zzS.zzShieldBeltDrawScale)
+                {
+                    xxAddTweak(zzTweaksReply, "Shield Belt Effect DrawScale Tweak");
+                }
+
+                if (zzSBE != none && zzSBE.DrawType != zzS.zzShieldBeltEffectDrawType)
+                {
+                    xxAddTweak(zzTweaksReply, "Shield Belt Effect DrawType Tweak");
+                }
+
+                if (zzSBE != none && zzSBE.Texture != zzS.zzShieldBeltEffectTexture)
+                {
+                    xxAddTweak(zzTweaksReply, "Shield Belt Effect Texture Tweak");
+                }
             }
+
          zzTestsExecuted++;
     }
 
@@ -504,7 +555,7 @@ simulated function xxCheckReply (string zzString)
     local string zzTweaksReply;
 
     zzReply = xxRC4Decrypt(zzCheckKey,zzString);
-    zzTestsExpected = (int(zzActor.bCheckRMode) + int(zzActor.bCheckRendering) + int(zzActor.bCheckPlayerSkins) + int (zzActor.bCheckFlags) + int (zzActor.bCheckBeltHacks) + int(zzActor.bCheckWeaponModels));
+    zzTestsExpected = (int(zzActor.bCheckRMode) + int(zzActor.bCheckRendering) + int(zzActor.bCheckPlayerSkins) + int (zzActor.bCheckFlags) + int(zzActor.bCheckPowerUps) + int (zzActor.bCheckBeltHacks) + int(zzActor.bCheckWeaponModels));
 
     // Check Length
     if (Len(zzReply)%33 != zzCheckKey%33)
