@@ -117,6 +117,7 @@ function xxGetProperties()
     local Pawn zzP;
     local bool zzHasBelt;
     local bool zzHasInvi;
+    local bool zzHasAmp;
     local Inventory zzInv;
 
     if (zzProps != none)
@@ -138,9 +139,14 @@ function xxGetProperties()
                 zzHasInvi = true;
                 break;
             }
+            if (zzInv.IsA('UDamage'))
+            {
+                zzHasAmp = true;
+                break;
+            }
           }
         if (zzP.IsA('PlayerPawn') && !zzP.IsA('Spectator'))
-            zzProps.xxAddProperties(PlayerPawn(zzP),zzP.texture,zzP.Mesh,zzP.bMeshEnviroMap,zzP.bUnlit,zzHasBelt,zzHasInvi,zzP.LightRadius,zzP.DrawScale);
+            zzProps.xxAddProperties(PlayerPawn(zzP),zzP.texture,zzP.Mesh,zzP.bMeshEnviroMap,zzP.bUnlit,zzHasBelt,zzHasInvi,zzHasAmp,zzP.LightRadius,zzP.DrawScale);
     }
 }
 
@@ -299,10 +305,6 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
 
             if (zzProps != none)
                 zzPlayerProps = zzProps.xxGetPlayerProperties(zzPP);
-
-            
-            if (zzProps != none)
-                zzPlayerProps = zzProps.xxGetPlayerProperties(zzPP);
         
              // Player LODBias Check
             if (zzA.bCheckLODBias)
@@ -314,25 +316,27 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                     xxAddTweak(zzTweaksReply,"LODBias Too High. Max Allowed LODBias = "$zzA.bMaxAllowedLODBias);
                 }
             }
-
             zzReply = xxGetTextureProperties(zzPP);
 
             // Check the XMenu skinhack
             if (xxGetToken(zzReply, 0) != string(zzPP.default.Texture))
             {
                 // If the player is not invisible, perform the brightskins check
-                if (!zzPlayerProps.zzOwnerHasInvi)
+                if (xxGetToken(zzReply, 0) != "UnrealShare.Belt_fx.Invis.Invis")
                 {
-                    // Kick unless these properties were replicated
                     if (zzPlayerProps == none
                         || (zzPlayerProps != none && zzPlayerProps.zzOwnerTexture != none && string(zzPlayerProps.zzOwnerTexture.class) != xxGetToken(zzReply, 0) && !zzPlayerProps.zzOwnerHasBelt))
                         xxAddTweak(zzTweaksReply,"Brightskins -> "@xxGetToken(zzReply,0));
                 }
             }
             if (xxGetToken(zzReply, 5) == "1")
-            {
-                if (zzPlayerProps == none || (zzPlayerProps != none && !zzPlayerProps.zzOwnerEnviroMap && !zzPlayerProps.zzOwnerHasBelt && !zzPlayerProps.zzOwnerHasInvi))
-                    xxAddTweak(zzTweaksReply,"MeshEnviroMapped skins -> "@xxGetToken(zzReply,0));
+            {   
+                // If the player is not invisible, perform the MeshEnviroMapped check
+                if (xxGetToken(zzReply, 0) != "UnrealShare.Belt_fx.Invis.Invis")
+                {
+                    if (zzPlayerProps == none || (zzPlayerProps != none && !zzPlayerProps.zzOwnerEnviroMap && !zzPlayerProps.zzOwnerHasBelt && !zzPlayerProps.zzOwnerHasInvi))
+                        xxAddTweak(zzTweaksReply,"MeshEnviroMapped skins -> "@xxGetToken(zzReply,0));
+                }
             }
             // Check Glow
             if (zzPP.LightRadius > 10)
@@ -398,11 +402,6 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                 if (zzSBE != none && zzSBE.DrawType != zzS.zzShieldBeltEffectDrawType)
                 {
                     xxAddTweak(zzTweaksReply, "Shield Belt Effect DrawType Tweak");
-                }
-
-                if (zzSBE != none && zzSBE.Texture != zzS.zzShieldBeltEffectTexture)
-                {
-                    xxAddTweak(zzTweaksReply, "Shield Belt Effect Texture Tweak");
                 }
             }
 

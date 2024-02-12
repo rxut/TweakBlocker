@@ -10,7 +10,8 @@ var mesh zzOwnerMesh;                           // Owner's mesh
 var bool zzOwnerEnviroMap;                      // Owner's EnviroMap
 var bool zzOwnerUnlit;                          // Owner's Unlit
 var bool zzOwnerHasBelt;                        // Owner has a shieldbelt?
-var bool zzOwnerHasInvi;                        // Owner has a shieldbelt?
+var bool zzOwnerHasAmp;                         // Owner has UDamage?
+var bool zzOwnerHasInvi;                        // Owner has Invi?
 var float zzOwnerLightRadius;                   //
 var float zzOwnerDrawScale;                     // Owner's DrawScale
 
@@ -20,7 +21,7 @@ var float zzOwnerDrawScale;                     // Owner's DrawScale
 replication
 {
     reliable if (ROLE == ROLE_AUTHORITY && bNetOwner)
-        zzPropertiesOwner, zzOwnerTexture, zzOwnerMesh, zzOwnerEnviroMap, zzOwnerUnlit, zzOwnerHasBelt, zzOwnerHasInvi, zzOwnerLightRadius, zzNextProperties, zzOwnerDrawScale;
+        zzPropertiesOwner, zzOwnerTexture, zzOwnerMesh, zzOwnerEnviroMap, zzOwnerUnlit, zzOwnerHasBelt, zzOwnerHasAmp, zzOwnerHasInvi, zzOwnerLightRadius, zzNextProperties, zzOwnerDrawScale;
 }
 
 // =============================================================================
@@ -35,11 +36,11 @@ event Destroyed()
 // =============================================================================
 // xxAddProperties ~ Add a new object at the end of the list and set properties
 // =============================================================================
-function xxAddProperties(PlayerPawn zzPP, texture zzTex, mesh zzMesh, bool zzEnviroMap, bool zzUnlit, bool zzHasBelt, bool zzHasInvi, float zzLightRadius, float zzDrawScale)
+function xxAddProperties(PlayerPawn zzPP, texture zzTex, mesh zzMesh, bool zzEnviroMap, bool zzUnlit, bool zzHasBelt, bool zzHasAmp, bool zzHasInvi, float zzLightRadius, float zzDrawScale)
 {
     if (zzNextProperties != none)
     {
-        zzNextProperties.xxAddProperties(zzPP,zzTex,zzMesh,zzEnviroMap,zzUnlit,zzHasBelt,zzHasInvi,zzLightRadius, zzDrawScale);
+        zzNextProperties.xxAddProperties(zzPP,zzTex,zzMesh,zzEnviroMap,zzUnlit,zzHasBelt,zzHasAmp,zzHasInvi,zzLightRadius, zzDrawScale);
     }
     else
     {
@@ -50,7 +51,8 @@ function xxAddProperties(PlayerPawn zzPP, texture zzTex, mesh zzMesh, bool zzEnv
         zzNextProperties.zzOwnerEnviroMap = zzEnviroMap;
         zzNextProperties.zzOwnerUnlit = zzUnlit;
         zzNextProperties.zzOwnerHasBelt = zzHasBelt;
-        zzNextProperties.zzOwnerHasInvi = zzOwnerHasInvi;
+        zzNextProperties.zzOwnerHasAmp = zzHasAmp;
+        zzNextProperties.zzOwnerHasInvi = zzHasInvi;
         zzNextProperties.zzOwnerLightRadius = zzLightRadius;
         zzNextProperties.zzOwnerDrawScale = zzDrawScale;
     }
