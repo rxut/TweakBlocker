@@ -219,10 +219,10 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         }
 
         // Shield Belt Render Tweak Alternative Check
-     // if (int(xxGetToken(xxGetRenderProperties(class'UT_ShieldBeltEffect'), 7)) == zzS.zzShieldBeltEffectStyle)
-     // {
-     //     xxAddTweak(zzTweaksReply,"Shield Belt Effect Tweak");
-     // }
+        // if (int(xxGetToken(xxGetRenderProperties(class'UT_ShieldBeltEffect'), 7)) == zzS.zzShieldBeltEffectStyle)
+        // {
+        //     xxAddTweak(zzTweaksReply,"Shield Belt Effect Tweak");
+        // }
 
         zzTestsExecuted++;
     }
@@ -241,7 +241,7 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
                     {
                         if (zzWeapon.bMeshEnviroMap == True)
                         {
-                            xxAddTweak(zzTweaksReply,"Weapon Texture Tweak");
+                            xxAddTweak(zzTweaksReply,""$zzWeapon.Name$") Texture Tweak ("$zzWeapon.Texture$")");
                         }
                     }
             }
@@ -256,12 +256,13 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         {
             if (zzShieldBelt != none && zzShieldBelt.DrawScale != zzS.zzShieldBeltDrawScale)
             {
-                    xxAddTweak(zzTweaksReply,"Belt DrawScale Tweak");
+                    xxAddTweak(zzTweaksReply,"Belt DrawScale Tweak ("$zzShieldBelt.DrawScale$")");
+            
             }
                 
             if (zzShieldBelt != none && zzShieldBelt.DrawType != zzS.zzShieldBeltDrawType)
             {
-                    xxAddTweak(zzTweaksReply,"Belt DrawType Tweak");
+                    xxAddTweak(zzTweaksReply,"Belt DrawType Tweak ("$zzShieldBelt.DrawType$")");
             }
         }
 
@@ -269,12 +270,12 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         {
             if (zzUDamage != none && zzUDamage.DrawScale != zzS.zzUDamageDrawScale)
             {
-                xxAddTweak(zzTweaksReply,"UDamage DrawScale Tweak");
+                xxAddTweak(zzTweaksReply,"UDamage DrawScale Tweak ("$zzUDamage.DrawScale$")");
             }
 
             if (zzUDamage != none && zzUDamage.DrawType != zzS.zzUDamageDrawType)
             {
-                xxAddTweak(zzTweaksReply,"UDamage DrawType Tweak");
+                xxAddTweak(zzTweaksReply,"UDamage DrawType Tweak ("$zzUDamage.DrawType$")");
             }
         }
 
@@ -282,12 +283,12 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
         {
             if (zzInvisibility != none && zzInvisibility.DrawScale != zzS.zzInvisibilityDrawScale)
             {
-                xxAddTweak(zzTweaksReply,"Invisibility DrawScale Tweak");
+                xxAddTweak(zzTweaksReply,"Invisibility DrawScale Tweak ("$zzInvisibility.DrawScale$")");
             }
       
             if (zzInvisibility != none && zzInvisibility.DrawType != zzS.zzInvisibilityDrawType)
             {
-                xxAddTweak(zzTweaksReply,"Invisibility DrawType Tweak");
+                xxAddTweak(zzTweaksReply,"Invisibility DrawType Tweak ("$zzInvisibility.DrawType$")");
             }
         }
 
@@ -348,14 +349,14 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
             // Check Player Model DrawScale
             if (zzPP.DrawScale != zzS.zzPPDefaultDrawScale)
             {
-                xxAddTweak(zzTweaksReply,"Player DrawScale Tweak");
+                xxAddTweak(zzTweaksReply,"Player DrawScale Tweak ("$zzPP.DrawScale$")");
             }
 
             // Check Player Model Fatness
 
             if (zzPP.Fatness != zzS.zzPPDefaultFatness)
             {
-                xxAddTweak(zzTweaksReply,"Player Size Tweak");
+                xxAddTweak(zzTweaksReply,"Player Size Tweak ("$zzPP.Fatness$")");
             }
         }
 
