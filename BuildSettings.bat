@@ -5,4 +5,3 @@
 :: Example:
 ::   set DEPENDENCIES=MyDependency MyOtherDependency MyThirdDependency
 :: 
-set DEPENDENCIES=
