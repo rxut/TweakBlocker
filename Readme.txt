@@ -1,4 +1,4 @@
-TweakBlocker v0.3 by AnthraX (Modified by rX)
+TweakBlocker v0.6 by AnthraX (Modified by rX)
 
 1) What is it?
 --------------
@@ -16,6 +16,10 @@ Examples of tweaks/cheats being detected:
 - Weapon Model Texture replacements
 - Visible Spawn Point Hack
 
+TweakBlocker can also disable all tweaks and reset class properties back to defaults.
+
+If you prefer to not kick players, when TweakBlocker Stealth Mode is enabled, no messages are sent to players, and players will not be kicked. Tweak Blocker will simply collect all detected tweaks into a report and create a log file for each player.
+
 2) How to install it?
 -----------------------
 
@@ -24,14 +28,17 @@ Examples of tweaks/cheats being detected:
 * Open the UnrealTournament.ini file of your server. Then browse to the 
   [Engine.GameEngine] section and add the following lines:
 
-  ServerActors=TBv03.TBActor
-  ServerPackages=TBv03
+  ServerActors=TweakBlocker_v06.TBActor
+  ServerPackages=TweakBlocker_v06
 
 * Browse to the end of the UnrealTournament.ini file and add the following lines:
 
-  [TBv03.TBActor]
+  [TweakBlocker_v06.TBActor]
   CheckInterval=30.0
   CheckTimeout=15.0
+  bStealthMode=false
+  bDisableTweaks=true
+  bCheckIGPlusClasses=true
   bCheckRendering=true
   bCheckRMode=true
   bCheckPlayerSkins=true
@@ -47,6 +54,11 @@ Examples of tweaks/cheats being detected:
 
 3) History
 ----------
+v0.6:
+  Major update with a variety of bug fixes, code optimizations and new features:
+    bStealthMode: When enabled, no messages are sent to players, and players will not be kicked. Tweak Blocker will add detected tweaks into a report and create a log file for each player.
+    bDisableTweaks: Enabling this will restore default properties for all classes and effectively disable tweaks.
+    bCheckIGPlusClasses: This is a specific toggle for IG+ and will allow IG+ classes to be reset to disable tweaks.
 v0.3:
   Third version by rX adding new features
 v0.2:
