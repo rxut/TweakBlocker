@@ -22,22 +22,14 @@ struct Properties
     var byte LightRadius;
     var bool bParticles;
     var bool bRandomFrame;
-    var int Curr;
     var mesh Mesh;
     var byte Fatness;
     var float LifeSpan;
     var rotator RotationRate;
-    var bool bRandomize;
     var float ShakeMag;
     var float ShakeTime;
     var float ShakeVert;
     var bool bDrawMuzzleFlash;
-    var float FlareOffset;
-    var float FlashC;
-    var float FlashLength;
-    var float FlashO;
-    var int	FlashS;
-    var float FlashY;
     var texture	MFTexture;
     var texture	MuzzleFlare;
     var mesh MuzzleFlashMesh;
@@ -49,7 +41,6 @@ struct Properties
     var texture ExpType;
     var float Muzzleflashscale;
     var vector PrePivot;
-    var vector ViewFog;
 };
 
 // Power-up defaults
@@ -65,7 +56,7 @@ var Properties zzEclipDefaults, zzMiniAmmoDefaults, zzBioAmmoDefaults, zzShockCo
 var Properties zzUT_EightballDefaults, zzUT_FlakCannonDefaults, zzShockRifleDefaults, zzSniperRifleDefaults, zzMinigun2Defaults, zzPulseGunDefaults, zzEnforcerDefaults, zzRipperDefaults, zzUT_BiorifleDefaults, zzImpactHammerDefaults, zzWarheadLauncherDefaults;
 
 // Translocator Projectiles
-var Properties zzTranslocatorTargetDefaults, zzTranslocOutEffectDefaults;
+var Properties zzTranslocatorDefaults, zzTranslocatorTargetDefaults, zzTranslocOutEffectDefaults;
 
 // Bio Projectiles
 var Properties zzBioGlobDefaults, zzBioSplashDefaults, zzUT_BioGelDefaults;
@@ -103,12 +94,15 @@ var Properties zzTMale1Defaults, zzTmale2Defaults, zzTFemale1Defaults, zzTFemale
 // Portal
 var Properties zzBarrelDefaults;
 
+// Shellcases
+var Properties zzMiniShellCaseDefaults, zzUT_ShellCaseDefaults;
+
 // Wall Hits
 var Properties zzUT_SparkDefaults, zzUT_SparksDefaults;
 
 var Properties zzWaterZoneDefaults, zzWaterRingDefaults;
 
-var Properties zzmTracerDefaults, zzUT_HeavyWallHitEffectDefaults, zzUT_LightWallHitEffectDefaults, zzUT_WallHitDefaults, zzMiniShellCaseDefaults, zzUTTeleportEffectDefaults, zzUT_GreenBloodPuffDefaults, zzUTTeleEffectDefaults, zzEnhancedRespawnDefaults;
+var Properties zzmTracerDefaults, zzUT_HeavyWallHitEffectDefaults, zzUT_LightWallHitEffectDefaults, zzUT_WallHitDefaults,  zzUTTeleportEffectDefaults, zzUT_GreenBloodPuffDefaults, zzUTTeleEffectDefaults, zzEnhancedRespawnDefaults;
 
 
 // =============================================================================
@@ -180,9 +174,13 @@ replication
     reliable if (ROLE == ROLE_AUTHORITY && bNetOwner)
     zzBarrelDefaults;
 
+    // Shellcases
+    reliable if (ROLE == ROLE_AUTHORITY && bNetOwner)
+    zzUT_ShellCaseDefaults, zzMiniShellCaseDefaults;
+
     // Wall Hits
     reliable if (ROLE == ROLE_AUTHORITY && bNetOwner)
-    zzUT_SparkDefaults, zzUT_SparksDefaults, zzWaterZoneDefaults, zzWaterRingDefaults, zzmTracerDefaults, zzUT_HeavyWallHitEffectDefaults, zzUT_LightWallHitEffectDefaults, zzUT_WallHitDefaults, zzMiniShellCaseDefaults, zzUTTeleportEffectDefaults, zzUT_GreenBloodPuffDefaults, zzUTTeleEffectDefaults, zzEnhancedRespawnDefaults;
+    zzUT_SparkDefaults, zzUT_SparksDefaults, zzWaterZoneDefaults, zzWaterRingDefaults, zzmTracerDefaults, zzUT_HeavyWallHitEffectDefaults, zzUT_LightWallHitEffectDefaults, zzUT_WallHitDefaults, zzUTTeleportEffectDefaults, zzUT_GreenBloodPuffDefaults, zzUTTeleEffectDefaults, zzEnhancedRespawnDefaults;
 
 }
 
@@ -200,6 +198,7 @@ function StoreClass(out Properties Str, class<Actor> Cls)
     Str.bHidden = Cls.default.bHidden;
     Str.bUnlit = Cls.default.bUnlit;
     Str.bMeshEnviroMap = Cls.default.bMeshEnviroMap;
+    Str.LightHue = Cls.default.LightHue;
     Str.LightBrightness = Cls.default.LightBrightness;
     Str.LightSaturation = Cls.default.LightSaturation;
     Str.LightRadius = Cls.default.LightRadius;
@@ -224,12 +223,6 @@ function StoreClass(out Properties Str, class<Actor> Cls)
             Str.ShakeTime = WeaponClass.default.ShakeTime;
             Str.ShakeVert = WeaponClass.default.ShakeVert;
             Str.bDrawMuzzleFlash = WeaponClass.default.bDrawMuzzleFlash;
-            Str.FlareOffset = WeaponClass.default.FlareOffset;
-            Str.FlashC = WeaponClass.default.FlashC;
-            Str.FlashLength = WeaponClass.default.FlashLength;
-            Str.FlashO = WeaponClass.default.FlashO;
-            Str.FlashS = WeaponClass.default.FlashS;
-            Str.FlashY = WeaponClass.default.FlashY;
             Str.MFTexture = WeaponClass.default.MFTexture;
             Str.MuzzleFlare = WeaponClass.default.MuzzleFlare;
             Str.MuzzleFlashMesh = WeaponClass.default.MuzzleFlashMesh;
@@ -241,13 +234,13 @@ function StoreClass(out Properties Str, class<Actor> Cls)
     }
 
     // Check if the class is a subclass of AnimSpriteEffect
-
     if (ClassIsChildOf(Cls, class'AnimSpriteEffect'))
     {
         AnimSpriteEffectClass = class<AnimSpriteEffect>(Cls);
         if (AnimSpriteEffectClass != None)
         {
             // Store projectile-specific properties
+            Str.NumFrames = AnimSpriteEffectClass.default.Numframes;
             Str.SpriteAnim[0] = AnimSpriteEffectClass.default.SpriteAnim[0];
             Str.SpriteAnim[1] = AnimSpriteEffectClass.default.SpriteAnim[1];
             Str.SpriteAnim[2] = AnimSpriteEffectClass.default.SpriteAnim[2];
@@ -303,6 +296,7 @@ function xxSetDefaultVars()
     StoreClass(zzBulletBoxDefaults, class'BulletBox');
 
     // Store translocator projectile defaults
+    StoreClass(zzTranslocatorDefaults, class'Translocator');
     StoreClass(zzTranslocatorTargetDefaults, class'TranslocatorTarget');
     StoreClass(zzTranslocOutEffectDefaults, class'TranslocOutEffect');
 
@@ -365,7 +359,6 @@ function xxSetDefaultVars()
     StoreClass(zzStarterBoltDefaults, class'StarterBolt');
     StoreClass(zzpBoltDefaults, class'PBolt');
 
-
     // Store random tweaks
     StoreClass(zzTMale1Defaults, class'TMale1');
     StoreClass(zzTmale2Defaults, class'Tmale2');
@@ -378,6 +371,10 @@ function xxSetDefaultVars()
     StoreClass(zzTFemale2CarcassDefault, class'TFemale2Carcass');
     StoreClass(zzTmalebodyDefault, class'Tmalebody');
 
+    // Store shellcase defaults
+    StoreClass(zzMiniShellCaseDefaults, class'MiniShellCase');
+    StoreClass(zzUT_ShellCaseDefaults, class'UT_ShellCase');
+
     // Store wall hit defaults
     StoreClass(zzUT_SparkDefaults, class'UT_Spark');
     StoreClass(zzUT_SparksDefaults, class'UT_Sparks');
@@ -387,7 +384,7 @@ function xxSetDefaultVars()
     StoreClass(zzUT_HeavyWallHitEffectDefaults, class'UT_HeavyWallHitEffect');
     StoreClass(zzUT_LightWallHitEffectDefaults, class'UT_LightWallHitEffect');
     StoreClass(zzUT_WallHitDefaults, class'UT_WallHit');
-    StoreClass(zzMiniShellCaseDefaults, class'MiniShellCase');
+    
     StoreClass(zzUTTeleportEffectDefaults, class'UTTeleportEffect');
     StoreClass(zzUT_GreenBloodPuffDefaults, class'UT_GreenBloodPuff');
     StoreClass(zzUTTeleEffectDefaults, class'UTTeleEffect');

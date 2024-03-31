@@ -26,6 +26,6 @@ simulated function Mutate(string zzMessage, PlayerPawn zzPP)
         zzPP.ClientMessage("* Checking Powerups:"@zzActor.bCheckPowerUps);
         zzPP.ClientMessage("* Checking Flags:"@zzActor.bCheckFlags);
         zzPP.ClientMessage("* Checking Belt Hacks:"@zzActor.bCheckBeltHacks);
-        zzPP.ClientMessage("* Checking IGPlus Classes:"@zzActor.bCheckIGPlusClasses);
+        zzPP.ClientMessage("* Checking Custom Classes:"@zzActor.bCheckCustomClasses);
     }
 }
