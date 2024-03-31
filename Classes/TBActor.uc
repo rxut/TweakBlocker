@@ -9,7 +9,6 @@ var TBSettings zzSettings;
 var TBDefaults zzDefaults;
 var string zzMyVer;
 var string lastLODBias;                 // Last known LODBias value
-var string zzClientGameVersion;        // Client's Game Version
 
 // =============================================================================
 // Config Variables
@@ -30,7 +29,7 @@ var config float bMaxAllowedLODBias;    // Max allowed lodbias
 var config bool bCheckWeaponModels;     // Check all weapon models
 var config bool bCheckBeltHacks;        // Check UT_ShieldBeltEffect tweaks
 var config bool bCheckPowerUps;         // Check UDamage, UT_Invisibility and Shield Belt tweaks
-var config bool bCheckCustomClasses;    // Check for IGPlus classes (If bDisableTweaks is enabled)
+var config bool bCheckCustomClasses;    // Check Custom classes to rest to default (If bDisableTweaks is enabled)
 var config string ResetCustomClassNames[65];   // Names of the Custom Classes to reset
 
 // =============================================================================
@@ -39,7 +38,7 @@ var config string ResetCustomClassNames[65];   // Names of the Custom Classes to
 replication
 {
     reliable if (ROLE == ROLE_AUTHORITY)
-         bCheckRendering, bStealthMode, bDisableTweaks, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckPowerUps, bCheckWeaponModels, bCheckCustomClasses, zzClientGameVersion,ResetCustomClassNames;
+         bCheckRendering, bStealthMode, bDisableTweaks, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckPowerUps, bCheckWeaponModels, bCheckCustomClasses, ResetCustomClassNames;
 }
 
 // =============================================================================
@@ -95,7 +94,6 @@ function xxInitNewPlayer(PlayerPawn zzPP)
     
     //zzPP.ClientMessage("This server is running TweakBlocker");
     zzRI.xxInitRI(self,zzS,zzD);
-
 }
 
 // =============================================================================
