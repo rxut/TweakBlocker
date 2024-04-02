@@ -126,9 +126,11 @@ TweakBlocker can work in Stealth Mode. When this mode is enabled, no messages ar
 3) History
 ----------
 v0.8:
-  Added a new check to detect illegal client-side packages which are not recognized by the server. This prevents spawning tweaks on the fly once the client has already joined to server. This version also brings improved logging in Stealth Mode, cleaner code, and multiple bug fixes.
+  Major update with a new check to detect illegal client-side packages. This feature detects tweaks spawned on the fly after the client has already joined to server.
+  This version also brings improved logging in Stealth Mode, cleaner code, and multiple bug fixes.
 v0.7:
-  Added support for resetting Custom Weapon and Projectile classes to default values. Improved overall detection, fixed several bugs, and cleaned up the code.
+  Added the configurable Custom Class Names list to reset those classes back to default values. This improves support for mods like InstaGibPlus and UTPure.
+  Improved overall detection, fixed several bugs, and cleaned up the code.
 v0.6:
   Major update with a variety of bug fixes, code optimizations, and new features:
     bStealthMode: When enabled, no messages are sent to players, and players will not be kicked. Tweak Blocker will add detected tweaks into a report and create a log file for each player.
