@@ -18,6 +18,8 @@ simulated function Mutate(string zzMessage, PlayerPawn zzPP)
         zzPP.ClientMessage("=============");
         zzPP.ClientMessage("* Version:"@zzActor.zzMyVer);
         zzPP.ClientMessage("* Disable Tweaks:"@zzActor.bDisableTweaks);
+        zzPP.ClientMessage("* Disable Custom Class Tweaks:"@zzActor.bDisableCustomClassTweaks);
+        zzPP.ClientMessage("* Checking Illent Client Packages:"@zzActor.bCheckClientPackages);
         zzPP.ClientMessage("* Checking Rendering:"@zzActor.bCheckRendering);
         zzPP.ClientMessage("* Checking RMode:"@zzActor.bCheckRMode);
         zzPP.ClientMessage("* Checking Player Skins:"@zzActor.bCheckPlayerSkins);
@@ -26,6 +28,5 @@ simulated function Mutate(string zzMessage, PlayerPawn zzPP)
         zzPP.ClientMessage("* Checking Powerups:"@zzActor.bCheckPowerUps);
         zzPP.ClientMessage("* Checking Flags:"@zzActor.bCheckFlags);
         zzPP.ClientMessage("* Checking Belt Hacks:"@zzActor.bCheckBeltHacks);
-        zzPP.ClientMessage("* Checking Custom Classes:"@zzActor.bCheckCustomClasses);
     }
 }

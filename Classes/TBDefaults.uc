@@ -184,7 +184,7 @@ replication
 
 }
 
-function StoreClass(out Properties Str, class<Actor> Cls)
+function xxSaveClassDefaults(out Properties Str, class<Actor> Cls)
 {
     local class<Weapon> WeaponClass;
     local class<AnimSpriteEffect> AnimSpriteEffectClass;
@@ -218,7 +218,7 @@ function StoreClass(out Properties Str, class<Actor> Cls)
         WeaponClass = class<Weapon>(Cls);
         if (WeaponClass != None)
         {
-            // Store weapon-specific properties
+            // Save weapon-specific properties
             Str.ShakeMag = WeaponClass.default.ShakeMag;
             Str.ShakeTime = WeaponClass.default.ShakeTime;
             Str.ShakeVert = WeaponClass.default.ShakeVert;
@@ -239,7 +239,7 @@ function StoreClass(out Properties Str, class<Actor> Cls)
         AnimSpriteEffectClass = class<AnimSpriteEffect>(Cls);
         if (AnimSpriteEffectClass != None)
         {
-            // Store projectile-specific properties
+            // Save projectile-specific properties
             Str.NumFrames = AnimSpriteEffectClass.default.Numframes;
             Str.SpriteAnim[0] = AnimSpriteEffectClass.default.SpriteAnim[0];
             Str.SpriteAnim[1] = AnimSpriteEffectClass.default.SpriteAnim[1];
@@ -257,138 +257,136 @@ function StoreClass(out Properties Str, class<Actor> Cls)
 // =============================================================================
 function xxSetDefaultVars()
 {
-    // Store weapon defaults   
-    StoreClass(zzUT_EightballDefaults, class'UT_Eightball');
-    StoreClass(zzUT_FlakCannonDefaults, class'UT_FlakCannon');
-    StoreClass(zzUT_BioRifleDefaults, class'UT_BioRifle');
-    StoreClass(zzMinigun2Defaults, class'Minigun2');
-    StoreClass(zzPulseGunDefaults, class'PulseGun');
-    StoreClass(zzRipperDefaults, class'Ripper');
-    StoreClass(zzEnforcerDefaults, class'Enforcer');
-    StoreClass(zzImpactHammerDefaults, class'ImpactHammer');
-    StoreClass(zzShockRifleDefaults, class'ShockRifle');
-    StoreClass(zzSniperRifleDefaults, class'SniperRifle');
-    StoreClass(zzWarheadLauncherDefaults, class'WarheadLauncher');
+    // Save weapon defaults   
+    xxSaveClassDefaults(zzUT_EightballDefaults, class'UT_Eightball');
+    xxSaveClassDefaults(zzUT_FlakCannonDefaults, class'UT_FlakCannon');
+    xxSaveClassDefaults(zzUT_BioRifleDefaults, class'UT_BioRifle');
+    xxSaveClassDefaults(zzMinigun2Defaults, class'Minigun2');
+    xxSaveClassDefaults(zzPulseGunDefaults, class'PulseGun');
+    xxSaveClassDefaults(zzRipperDefaults, class'Ripper');
+    xxSaveClassDefaults(zzEnforcerDefaults, class'Enforcer');
+    xxSaveClassDefaults(zzImpactHammerDefaults, class'ImpactHammer');
+    xxSaveClassDefaults(zzShockRifleDefaults, class'ShockRifle');
+    xxSaveClassDefaults(zzSniperRifleDefaults, class'SniperRifle');
+    xxSaveClassDefaults(zzWarheadLauncherDefaults, class'WarheadLauncher');
 
-    // Store pickup defaults   
-    StoreClass(zzShieldBeltEffectDefaults, class'UT_ShieldBeltEffect');
-    StoreClass(zzShieldBeltDefaults, class'UT_ShieldBelt');
-    StoreClass(zzUDamageDefaults, class'UDamage');
-    StoreClass(zzInvisibilityDefaults, class'UT_Invisibility');
-    StoreClass(zzArmor2Defaults, class'Armor2');
-    StoreClass(zzThighPadsDefaults, class'ThighPads');
-    StoreClass(zzUT_JumpBootsDefaults, class'UT_JumpBoots');
+    // Save pickup defaults   
+    xxSaveClassDefaults(zzShieldBeltEffectDefaults, class'UT_ShieldBeltEffect');
+    xxSaveClassDefaults(zzShieldBeltDefaults, class'UT_ShieldBelt');
+    xxSaveClassDefaults(zzUDamageDefaults, class'UDamage');
+    xxSaveClassDefaults(zzInvisibilityDefaults, class'UT_Invisibility');
+    xxSaveClassDefaults(zzArmor2Defaults, class'Armor2');
+    xxSaveClassDefaults(zzThighPadsDefaults, class'ThighPads');
+    xxSaveClassDefaults(zzUT_JumpBootsDefaults, class'UT_JumpBoots');
 
-    // Store health pickup defaults
-    StoreClass(zzMedboxDefaults, class'MedBox');
-    StoreClass(zzHealthPackDefaults, class'HealthPack');
-    StoreClass(zzHealthVialDefaults, class'HealthVial');
+    // Save health pickup defaults
+    xxSaveClassDefaults(zzMedboxDefaults, class'MedBox');
+    xxSaveClassDefaults(zzHealthPackDefaults, class'HealthPack');
+    xxSaveClassDefaults(zzHealthVialDefaults, class'HealthVial');
 
-    // Store ammo pickup defaults
-    StoreClass(zzEclipDefaults, class'EClip');
-    StoreClass(zzMiniAmmoDefaults, class'MiniAmmo');
-    StoreClass(zzBioAmmoDefaults, class'BioAmmo');
-    StoreClass(zzShockCoreDefaults, class'ShockCore');
-    StoreClass(zzPAmmoDefaults, class'PAmmo');
-    StoreClass(zzBladeHopperDefaults, class'BladeHopper');
-    StoreClass(zzFlakAmmoDefaults, class'FlakAmmo');
-    StoreClass(zzRocketPackDefaults, class'RocketPack');
-    StoreClass(zzBulletBoxDefaults, class'BulletBox');
+    // Save ammo pickup defaults
+    xxSaveClassDefaults(zzEclipDefaults, class'EClip');
+    xxSaveClassDefaults(zzMiniAmmoDefaults, class'MiniAmmo');
+    xxSaveClassDefaults(zzBioAmmoDefaults, class'BioAmmo');
+    xxSaveClassDefaults(zzShockCoreDefaults, class'ShockCore');
+    xxSaveClassDefaults(zzPAmmoDefaults, class'PAmmo');
+    xxSaveClassDefaults(zzBladeHopperDefaults, class'BladeHopper');
+    xxSaveClassDefaults(zzFlakAmmoDefaults, class'FlakAmmo');
+    xxSaveClassDefaults(zzRocketPackDefaults, class'RocketPack');
+    xxSaveClassDefaults(zzBulletBoxDefaults, class'BulletBox');
 
-    // Store translocator projectile defaults
-    StoreClass(zzTranslocatorDefaults, class'Translocator');
-    StoreClass(zzTranslocatorTargetDefaults, class'TranslocatorTarget');
-    StoreClass(zzTranslocOutEffectDefaults, class'TranslocOutEffect');
+    // Save translocator projectile defaults
+    xxSaveClassDefaults(zzTranslocatorDefaults, class'Translocator');
+    xxSaveClassDefaults(zzTranslocatorTargetDefaults, class'TranslocatorTarget');
+    xxSaveClassDefaults(zzTranslocOutEffectDefaults, class'TranslocOutEffect');
 
-    // Store bio projectile defaults
-    StoreClass(zzBioGlobDefaults, class'BioGlob');
-    StoreClass(zzBioSplashDefaults, class'BioSplash');
-    StoreClass(zzUT_BioGelDefaults, class'UT_BioGel');
+    // Save bio projectile defaults
+    xxSaveClassDefaults(zzBioGlobDefaults, class'BioGlob');
+    xxSaveClassDefaults(zzBioSplashDefaults, class'BioSplash');
+    xxSaveClassDefaults(zzUT_BioGelDefaults, class'UT_BioGel');
 
-    // Store rocket projectile defaults
-    StoreClass(zzRocketMk2Defaults, class'RocketMk2');
-    StoreClass(zzRocketTrailDefaults, class'RocketTrail');
-    StoreClass(zzUT_GrenadeDefaults, class'UT_Grenade');
-    StoreClass(zzUT_SeekingRocketDefaults, class'UT_SeekingRocket');
+    // Save rocket projectile defaults
+    xxSaveClassDefaults(zzRocketMk2Defaults, class'RocketMk2');
+    xxSaveClassDefaults(zzRocketTrailDefaults, class'RocketTrail');
+    xxSaveClassDefaults(zzUT_GrenadeDefaults, class'UT_Grenade');
+    xxSaveClassDefaults(zzUT_SeekingRocketDefaults, class'UT_SeekingRocket');
 
-    // Store rocket smoke defaults
-    StoreClass(zzLightSmokeTrailDefaults, class'LightSmokeTrail');
-    StoreClass(zzUT_SpriteSmokePuffDefaults, class'UT_SpriteSmokePuff');
-    StoreClass(zzUTSmokeTrailDefaults, class'UTSmokeTrail');
+    // Save rocket smoke defaults
+    xxSaveClassDefaults(zzLightSmokeTrailDefaults, class'LightSmokeTrail');
+    xxSaveClassDefaults(zzUT_SpriteSmokePuffDefaults, class'UT_SpriteSmokePuff');
+    xxSaveClassDefaults(zzUTSmokeTrailDefaults, class'UTSmokeTrail');
 
-    // Store rocket explosion defaults
-    StoreClass(zzUT_SpriteBallChildDefaults, class'UT_SpriteBallChild');
+    // Save rocket explosion defaults
+    xxSaveClassDefaults(zzUT_SpriteBallChildDefaults, class'UT_SpriteBallChild');
+    xxSaveClassDefaults(zzUT_SpriteBallExplosionDefaults, class'UT_SpriteBallExplosion');
 
-    StoreClass(zzUT_SpriteBallExplosionDefaults, class'UT_SpriteBallExplosion');
+    // Save flak projectile defaults
+    xxSaveClassDefaults(zzChunkTrailDefaults, class'ChunkTrail');
+    xxSaveClassDefaults(zzUTChunkDefaults, class'UTChunk');
+    xxSaveClassDefaults(zzUTChunk1Defaults, class'UTChunk1');
+    xxSaveClassDefaults(zzUTChunk2Defaults, class'UTChunk2');
+    xxSaveClassDefaults(zzUTChunk3Defaults, class'UTChunk3');
+    xxSaveClassDefaults(zzUTChunk4Defaults, class'UTChunk4');
+    xxSaveClassDefaults(zzUT_FlameExplosionDefaults, class'UT_FlameExplosion');
+    xxSaveClassDefaults(zzFlakSlugDefaults, class'FlakSlug');
 
-    // Store flak projectile defaults
-    StoreClass(zzChunkTrailDefaults, class'ChunkTrail');
-    StoreClass(zzUTChunkDefaults, class'UTChunk');
-    StoreClass(zzUTChunk1Defaults, class'UTChunk1');
-    StoreClass(zzUTChunk2Defaults, class'UTChunk2');
-    StoreClass(zzUTChunk3Defaults, class'UTChunk3');
-    StoreClass(zzUTChunk4Defaults, class'UTChunk4');
-    StoreClass(zzUT_FlameExplosionDefaults, class'UT_FlameExplosion');
-    StoreClass(zzFlakSlugDefaults, class'FlakSlug');
+    // Save ripper projectile defaults
+    xxSaveClassDefaults(zzRazor2Defaults, class'Razor2');
+    xxSaveClassDefaults(zzRazor2AltDefaults, class'Razor2Alt');
 
-    // Store ripper projectile defaults
-    StoreClass(zzRazor2Defaults, class'Razor2');
-    StoreClass(zzRazor2AltDefaults, class'Razor2Alt');
+    // Save impact hammer effects
+    xxSaveClassDefaults(zzImpactMarkDefaults, class'ImpactMark');
 
-    // Store impact hammer effects
-    StoreClass(zzImpactMarkDefaults, class'ImpactMark');
+    // Save shock rifle effects
+    xxSaveClassDefaults(zzShockExploDefaults, class'ShockExplo');
+    xxSaveClassDefaults(zzUT_RingExplosion5Defaults, class'UT_RingExplosion5');
+    xxSaveClassDefaults(zzUT_RingExplosionDefaults, class'UT_RingExplosion');
+    xxSaveClassDefaults(zzUT_RingExplosion4Defaults, class'UT_RingExplosion4');
+    xxSaveClassDefaults(zzUT_RingExplosion3Defaults, class'UT_RingExplosion3');
+    xxSaveClassDefaults(zzUT_ComboRingDefaults, class'UT_ComboRing');
+    xxSaveClassDefaults(zzShockBeamDefaults, class'ShockBeam');
+    xxSaveClassDefaults(zzShockRifleWaveDefaults, class'ShockRifleWave');
+    xxSaveClassDefaults(zzShockProjDefaults, class'ShockProj');
+    xxSaveClassDefaults(zzShockWaveDefaults, class'ShockWave');
 
-    // Store shock rifle effects
-    StoreClass(zzShockExploDefaults, class'ShockExplo');
-    StoreClass(zzUT_RingExplosion5Defaults, class'UT_RingExplosion5');
-    StoreClass(zzUT_RingExplosionDefaults, class'UT_RingExplosion');
-    StoreClass(zzUT_RingExplosion4Defaults, class'UT_RingExplosion4');
-    StoreClass(zzUT_RingExplosion3Defaults, class'UT_RingExplosion3');
-    StoreClass(zzUT_ComboRingDefaults, class'UT_ComboRing');
-    StoreClass(zzShockBeamDefaults, class'ShockBeam');
-    StoreClass(zzShockRifleWaveDefaults, class'ShockRifleWave');
-    StoreClass(zzShockProjDefaults, class'ShockProj');
-    StoreClass(zzShockWaveDefaults, class'ShockWave');
+    // Save pulse gun effects
+    xxSaveClassDefaults(zzPlasmaCapDefaults, class'PlasmaCap');
+    xxSaveClassDefaults(zzPlasmaHitDefaults, class'PlasmaHit');
+    xxSaveClassDefaults(zzPlasmaSphereDefaults, class'PlasmaSphere');
+    xxSaveClassDefaults(zzPlasmaSphereDefaults, class'PlasmaSphere');
+    xxSaveClassDefaults(zzStarterBoltDefaults, class'StarterBolt');
+    xxSaveClassDefaults(zzStarterBoltDefaults, class'StarterBolt');
+    xxSaveClassDefaults(zzpBoltDefaults, class'PBolt');
 
-    // Store pulse gun effects
-    StoreClass(zzPlasmaCapDefaults, class'PlasmaCap');
-    StoreClass(zzPlasmaHitDefaults, class'PlasmaHit');
-    StoreClass(zzPlasmaSphereDefaults, class'PlasmaSphere');
-    StoreClass(zzPlasmaSphereDefaults, class'PlasmaSphere');
-    StoreClass(zzStarterBoltDefaults, class'StarterBolt');
-    StoreClass(zzStarterBoltDefaults, class'StarterBolt');
-    StoreClass(zzpBoltDefaults, class'PBolt');
+    // Save random tweaks
+    xxSaveClassDefaults(zzTMale1Defaults, class'TMale1');
+    xxSaveClassDefaults(zzTmale2Defaults, class'Tmale2');
+    xxSaveClassDefaults(zzTFemale1Defaults, class'TFemale1');
+    xxSaveClassDefaults(zzTFemale2Defaults, class'TFemale2');
+    xxSaveClassDefaults(zzTBossDefaults, class'TBoss');
+    xxSaveClassDefaults(zzTmale1CarcassDefault, class'Tmale1Carcass');
+    xxSaveClassDefaults(zzTmale2CarcassDefault, class'Tmale2Carcass');
+    xxSaveClassDefaults(zzTFemale1CarcassDefault, class'TFemale1Carcass');
+    xxSaveClassDefaults(zzTFemale2CarcassDefault, class'TFemale2Carcass');
+    xxSaveClassDefaults(zzTmalebodyDefault, class'Tmalebody');
 
-    // Store random tweaks
-    StoreClass(zzTMale1Defaults, class'TMale1');
-    StoreClass(zzTmale2Defaults, class'Tmale2');
-    StoreClass(zzTFemale1Defaults, class'TFemale1');
-    StoreClass(zzTFemale2Defaults, class'TFemale2');
-    StoreClass(zzTBossDefaults, class'TBoss');
-    StoreClass(zzTmale1CarcassDefault, class'Tmale1Carcass');
-    StoreClass(zzTmale2CarcassDefault, class'Tmale2Carcass');
-    StoreClass(zzTFemale1CarcassDefault, class'TFemale1Carcass');
-    StoreClass(zzTFemale2CarcassDefault, class'TFemale2Carcass');
-    StoreClass(zzTmalebodyDefault, class'Tmalebody');
+    // Save shellcase defaults
+    xxSaveClassDefaults(zzMiniShellCaseDefaults, class'MiniShellCase');
+    xxSaveClassDefaults(zzUT_ShellCaseDefaults, class'UT_ShellCase');
 
-    // Store shellcase defaults
-    StoreClass(zzMiniShellCaseDefaults, class'MiniShellCase');
-    StoreClass(zzUT_ShellCaseDefaults, class'UT_ShellCase');
-
-    // Store wall hit defaults
-    StoreClass(zzUT_SparkDefaults, class'UT_Spark');
-    StoreClass(zzUT_SparksDefaults, class'UT_Sparks');
-    StoreClass(zzWaterZoneDefaults, class'WaterZone');
-    StoreClass(zzWaterRingDefaults, class'WaterRing');
-    StoreClass(zzmTracerDefaults, class'mTracer');
-    StoreClass(zzUT_HeavyWallHitEffectDefaults, class'UT_HeavyWallHitEffect');
-    StoreClass(zzUT_LightWallHitEffectDefaults, class'UT_LightWallHitEffect');
-    StoreClass(zzUT_WallHitDefaults, class'UT_WallHit');
-    
-    StoreClass(zzUTTeleportEffectDefaults, class'UTTeleportEffect');
-    StoreClass(zzUT_GreenBloodPuffDefaults, class'UT_GreenBloodPuff');
-    StoreClass(zzUTTeleEffectDefaults, class'UTTeleEffect');
-    StoreClass(zzEnhancedRespawnDefaults, class'EnhancedRespawn');
+    // Save misc class defaults
+    xxSaveClassDefaults(zzUT_SparkDefaults, class'UT_Spark');
+    xxSaveClassDefaults(zzUT_SparksDefaults, class'UT_Sparks');
+    xxSaveClassDefaults(zzWaterZoneDefaults, class'WaterZone');
+    xxSaveClassDefaults(zzWaterRingDefaults, class'WaterRing');
+    xxSaveClassDefaults(zzmTracerDefaults, class'mTracer');
+    xxSaveClassDefaults(zzUT_HeavyWallHitEffectDefaults, class'UT_HeavyWallHitEffect');
+    xxSaveClassDefaults(zzUT_LightWallHitEffectDefaults, class'UT_LightWallHitEffect');
+    xxSaveClassDefaults(zzUT_WallHitDefaults, class'UT_WallHit');
+    xxSaveClassDefaults(zzUTTeleportEffectDefaults, class'UTTeleportEffect');
+    xxSaveClassDefaults(zzUT_GreenBloodPuffDefaults, class'UT_GreenBloodPuff');
+    xxSaveClassDefaults(zzUTTeleEffectDefaults, class'UTTeleEffect');
+    xxSaveClassDefaults(zzEnhancedRespawnDefaults, class'EnhancedRespawn');
 
 }
 

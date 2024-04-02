@@ -17,20 +17,21 @@ var config float CheckInterval;         // Number of seconds between each check
 var config float CheckTimeout;          // Time allowed to finish the check
 var config bool bStealthMode;           // Stealth mode, no messages to players or kicks. Just log each tweak
 var config bool bDisableTweaks;         // Disable tweaks and restore default properties for actors
+var config bool bDisableCustomClassTweaks;    // Check Custom Actor and Weapon classes to reset to default (Works only if bDisableTweaks is enabled)
+var config bool bCheckClientPackages;   // Check for client packages that don't match the server and kick the player
 var config bool bCheckRendering;        // General Rendering tweaks (Hidden/Transparent textures), wallhacks, lightradius
+var config bool bCheckLODBias;          // Check lodbias
+var config float bMaxAllowedLODBias;    // Max allowed lodbias
 var config bool bCheckRMode;            // Classic RMODE hacks
 var config bool bCheckPlayerSkins;      // Brightskins by replacing player textures
+var config bool bCheckWeaponModels;     // Check all weapon models
+var config bool bCheckBeltHacks;        // Check UT_ShieldBeltEffect tweaks
+var config bool bCheckPowerUps;         // Check UDamage, UT_Invisibility and Shield Belt tweaks
 var config bool bCheckFlags;            // Flag tweaks
 var config bool bExternalLogs;          // Create External logs when someone gets kicked?
 var config string LogPath;              // Folder to log to
 var config string LogPrefix;            // Tag
-var config bool bCheckLODBias;          // Check lodbias
-var config float bMaxAllowedLODBias;    // Max allowed lodbias
-var config bool bCheckWeaponModels;     // Check all weapon models
-var config bool bCheckBeltHacks;        // Check UT_ShieldBeltEffect tweaks
-var config bool bCheckPowerUps;         // Check UDamage, UT_Invisibility and Shield Belt tweaks
-var config bool bCheckCustomClasses;    // Check Custom classes to rest to default (If bDisableTweaks is enabled)
-var config string ResetCustomClassNames[65];   // Names of the Custom Classes to reset
+var config string CustomClassNames[65];   // Names of the Custom Classes to reset to default
 
 // =============================================================================
 // Replication
@@ -38,7 +39,7 @@ var config string ResetCustomClassNames[65];   // Names of the Custom Classes to
 replication
 {
     reliable if (ROLE == ROLE_AUTHORITY)
-         bCheckRendering, bStealthMode, bDisableTweaks, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckPowerUps, bCheckWeaponModels, bCheckCustomClasses, ResetCustomClassNames;
+         bCheckRendering, bStealthMode, bDisableTweaks, bCheckClientPackages, bCheckRMode, bCheckPlayerSkins, bCheckFlags, bCheckLODBias, bCheckBeltHacks, bMaxAllowedLODBias, bCheckPowerUps, bCheckWeaponModels, bDisableCustomClassTweaks, CustomClassNames;
 }
 
 // =============================================================================
@@ -48,7 +49,7 @@ function PostBeginPlay()
 {
     local TBMutator zzMut;
 
-    Log("### TweakBlocker v0.7 - (c) 2009 AnthraX, 2024 rX");
+    Log("### TweakBlocker v0.8 - (c) 2009 AnthraX, 2024 rX");
 
     zzMut = Level.Spawn(class'TBMutator');
     zzMut.zzActor = self;
@@ -97,10 +98,10 @@ function xxInitNewPlayer(PlayerPawn zzPP)
 }
 
 // =============================================================================
-// GetLODBias ~ Retrieve the current LODBias value for a player
+// xxGetLODBias ~ Retrieve the current LODBias value for a player
 // =============================================================================
 
-simulated function string GetLODBias(PlayerPawn zzPP)
+simulated function string xxGetLODBias(PlayerPawn zzPP)
 {
     local string lodBias;
 
@@ -126,11 +127,12 @@ defaultproperties
     bHidden=true
     bAlwaysRelevant=true
     NetPriority=3.0
-    zzMyVer="v0.7"
+    zzMyVer="v0.8"
     CheckInterval=30.0
     CheckTimeOut=15.0
     bStealthMode=false
     bDisableTweaks=true
+    bCheckClientPackages=true
     bCheckRendering=true
     bCheckRMode=true
     bCheckPlayerSkins=true
@@ -139,74 +141,74 @@ defaultproperties
     bCheckWeaponModels=true
     bCheckPowerUps=true
     bCheckBeltHacks=true
-    bCheckCustomClasses=true
+    bDisableCustomClassTweaks=true
     bExternalLogs=true
     bMaxAllowedLODBias=4.0000
     LogPath="../Logs/"
     LogPrefix="[TB]"
-    ResetCustomClassNames(0)="ST_BioGlob"
-    ResetCustomClassNames(1)="ST_BioSplash"
-    ResetCustomClassNames(2)="ST_FlakSlug"
-    ResetCustomClassNames(3)="ST_minigun2"
-    ResetCustomClassNames(4)="ST_UT_Grenade"
-    ResetCustomClassNames(5)="ST_GuidedWarshell"
-    ResetCustomClassNames(6)="ST_ut_biorifle"
-    ResetCustomClassNames(7)="ST_ImpactHammer"
-    ResetCustomClassNames(8)="ST_PBolt"
-    ResetCustomClassNames(9)="ST_PlasmaSphere"
-    ResetCustomClassNames(10)="ST_PulseGun"
-    ResetCustomClassNames(11)="ST_Razor2"
-    ResetCustomClassNames(12)="ST_Razor2Alt"
-    ResetCustomClassNames(13)="ST_enforcer"
-    ResetCustomClassNames(14)="ST_RocketMk2"
-    ResetCustomClassNames(15)="ST_ShockProj"
-    ResetCustomClassNames(16)="ST_ShockRifle"
-    ResetCustomClassNames(17)="ST_ShockWave"
-    ResetCustomClassNames(18)="ST_SniperRifle"
-    ResetCustomClassNames(19)="ST_StarterBolt"
-    ResetCustomClassNames(20)="ST_UT_SeekingRocket"
-    ResetCustomClassNames(21)="ST_WarheadLauncher"
-    ResetCustomClassNames(22)="ST_UTChunk"
-    ResetCustomClassNames(23)="ST_UTChunk1"
-    ResetCustomClassNames(24)="ST_UTChunk2"
-    ResetCustomClassNames(25)="ST_UTChunk3"
-    ResetCustomClassNames(26)="ST_UTChunk4"
-    ResetCustomClassNames(27)="ST_ripper"
-    ResetCustomClassNames(28)="ST_UT_BioGel"
-    ResetCustomClassNames(29)="ST_UT_Eightball"
-    ResetCustomClassNames(30)="ST_UT_FlakCannon"
-    ResetCustomClassNames(31)="ST_Translocator"
-    ResetCustomClassNames(32)="ST_TranslocatorTarget"
-    ResetCustomClassNames(33)=""
-    ResetCustomClassNames(34)=""
-    ResetCustomClassNames(35)=""
-    ResetCustomClassNames(36)=""
-    ResetCustomClassNames(37)=""
-    ResetCustomClassNames(38)=""
-    ResetCustomClassNames(39)=""
-    ResetCustomClassNames(40)=""
-    ResetCustomClassNames(41)=""
-    ResetCustomClassNames(42)=""
-    ResetCustomClassNames(43)=""
-    ResetCustomClassNames(44)=""
-    ResetCustomClassNames(45)=""
-    ResetCustomClassNames(46)=""
-    ResetCustomClassNames(47)=""
-    ResetCustomClassNames(48)=""
-    ResetCustomClassNames(49)=""
-    ResetCustomClassNames(50)=""
-    ResetCustomClassNames(51)=""
-    ResetCustomClassNames(52)=""
-    ResetCustomClassNames(53)=""
-    ResetCustomClassNames(54)=""
-    ResetCustomClassNames(55)=""
-    ResetCustomClassNames(56)=""
-    ResetCustomClassNames(57)=""
-    ResetCustomClassNames(58)=""
-    ResetCustomClassNames(59)=""
-    ResetCustomClassNames(60)=""
-    ResetCustomClassNames(61)=""
-    ResetCustomClassNames(62)=""
-    ResetCustomClassNames(63)=""
-    ResetCustomClassNames(64)=""
+    CustomClassNames(0)="ST_BioGlob"
+    CustomClassNames(1)="ST_BioSplash"
+    CustomClassNames(2)="ST_FlakSlug"
+    CustomClassNames(3)="ST_minigun2"
+    CustomClassNames(4)="ST_UT_Grenade"
+    CustomClassNames(5)="ST_GuidedWarshell"
+    CustomClassNames(6)="ST_ut_biorifle"
+    CustomClassNames(7)="ST_ImpactHammer"
+    CustomClassNames(8)="ST_PBolt"
+    CustomClassNames(9)="ST_PlasmaSphere"
+    CustomClassNames(10)="ST_PulseGun"
+    CustomClassNames(11)="ST_Razor2"
+    CustomClassNames(12)="ST_Razor2Alt"
+    CustomClassNames(13)="ST_enforcer"
+    CustomClassNames(14)="ST_RocketMk2"
+    CustomClassNames(15)="ST_ShockProj"
+    CustomClassNames(16)="ST_ShockRifle"
+    CustomClassNames(17)="ST_ShockWave"
+    CustomClassNames(18)="ST_SniperRifle"
+    CustomClassNames(19)="ST_StarterBolt"
+    CustomClassNames(20)="ST_UT_SeekingRocket"
+    CustomClassNames(21)="ST_WarheadLauncher"
+    CustomClassNames(22)="ST_UTChunk"
+    CustomClassNames(23)="ST_UTChunk1"
+    CustomClassNames(24)="ST_UTChunk2"
+    CustomClassNames(25)="ST_UTChunk3"
+    CustomClassNames(26)="ST_UTChunk4"
+    CustomClassNames(27)="ST_ripper"
+    CustomClassNames(28)="ST_UT_BioGel"
+    CustomClassNames(29)="ST_UT_Eightball"
+    CustomClassNames(30)="ST_UT_FlakCannon"
+    CustomClassNames(31)="ST_Translocator"
+    CustomClassNames(32)="ST_TranslocatorTarget"
+    CustomClassNames(33)=""
+    CustomClassNames(34)=""
+    CustomClassNames(35)=""
+    CustomClassNames(36)=""
+    CustomClassNames(37)=""
+    CustomClassNames(38)=""
+    CustomClassNames(39)=""
+    CustomClassNames(40)=""
+    CustomClassNames(41)=""
+    CustomClassNames(42)=""
+    CustomClassNames(43)=""
+    CustomClassNames(44)=""
+    CustomClassNames(45)=""
+    CustomClassNames(46)=""
+    CustomClassNames(47)=""
+    CustomClassNames(48)=""
+    CustomClassNames(49)=""
+    CustomClassNames(50)=""
+    CustomClassNames(51)=""
+    CustomClassNames(52)=""
+    CustomClassNames(53)=""
+    CustomClassNames(54)=""
+    CustomClassNames(55)=""
+    CustomClassNames(56)=""
+    CustomClassNames(57)=""
+    CustomClassNames(58)=""
+    CustomClassNames(59)=""
+    CustomClassNames(60)=""
+    CustomClassNames(61)=""
+    CustomClassNames(62)=""
+    CustomClassNames(63)=""
+    CustomClassNames(64)=""
 }

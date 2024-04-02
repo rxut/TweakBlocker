@@ -16,14 +16,16 @@ var PlayerReplicationInfo zzPRI;       // PRI of the player
 var string     zzMyVer;                // Version
 var int        zzTweaksFound;          // Number of tweaks found during normal mode
 var int        zzStealthTweaksFound;   // Number of tweaks found during stealth mode
+var int        zzStealthTweaksLogged;   // Number of tweaks found during stealth mode
 var class<Actor> zzDynClass;           // Dynamic class for iterating through custom classes
 var class<Actor> zzDynItem;            // Dynamic class for iterating through custom classes for items
 var bool bDisabledCustomClassTweaks;   // Have the Custom class tweaks been disabled
-var bool bDisabledBaseClassTweaks;            // Have the Base Game class tweaks been disabled
+var bool bDisabledBaseClassTweaks;     // Have the Base Game class tweaks been disabled
+var bool bStoppedLog;                  // Has the log been sent?
 
 var string zzDetectedTweakClassNames[128];    // For collecting the class name detected tweaks during stealth mode
 var string zzDetectedTweakPropery[128];       // For collecting all detected tweaks during stealth mode
-var string TimeStamp;                         // Time Stamp string for the log
+var string zzTimeStamp;                         // Time Stamp string for the log
 var string zzClientVersion;                   // Game Client Version from the player
 
 // =============================================================================
@@ -31,11 +33,12 @@ var string zzClientVersion;                   // Game Client Version from the pl
 // =============================================================================
 replication
 {
+    // Run on clients
     reliable if (ROLE == ROLE_AUTHORITY)
-        xxDisableCustomClassTweaks, xxDisableBaseClassTweaks, xxSetClassDefaults, xxCheck, xxConsoleCommand, xxShowConsole, xxGetClientVersion;
+        xxDisableCustomClassTweaks, xxDisableBaseClassTweaks, xxSetClassDefaults, xxCheck, xxConsoleCommand, xxShowConsole, xxGetClientVersion, xxCheckClientPackages;
 
     reliable if (ROLE < ROLE_AUTHORITY)
-        xxCheckReply, xxStealthAddTweak, xxSaveClientVersion;
+        xxCheckReply, xxStealthAddTweak, xxSaveClientVersion, xxFindClientRoguePackages;
 }
 
 // =============================================================================
@@ -87,7 +90,6 @@ function Timer()
         //xxClientMessage("zzState 0 set to: "@zzState); // Debug
 
         xxGetProperties();
-        xxGetClientVersion();
 
         if (zzActor.bDisableTweaks) // Main Toggle for Disabling Tweaks
         {
@@ -95,16 +97,16 @@ function Timer()
                 {
                     xxDisableBaseClassTweaks(zzDefaults);
                     bDisabledBaseClassTweaks = true;
-                    xxClientMessage("Your tweaks have been disabled");
+                    // xxClientMessage("Your tweaks have been disabled"); // Debug
                 }
 
-            if (zzActor.bCheckCustomClasses && !bDisabledCustomClassTweaks) // Main Toggle for Checking IG+ Classes
+            if (zzActor.bDisableCustomClassTweaks && !bDisabledCustomClassTweaks) // Main Toggle for Checking IG+ Classes
             {
-                for (i = 0; i < ArrayCount(zzActor.ResetCustomClassNames); i++)
+                for (i = 0; i < ArrayCount(zzActor.CustomClassNames); i++)
                 {
-                    if( zzActor.ResetCustomClassNames[i]=="" ) continue;
+                    if( zzActor.CustomClassNames[i]=="" ) continue;
                     zzDynClass = None;
-                    SetPropertyText("zzDynClass", "Class'"$zzActor.ResetCustomClassNames[i]$"'");
+                    SetPropertyText("zzDynClass", "Class'"$zzActor.CustomClassNames[i]$"'");
                     if( zzDynClass==None ) continue;
                     xxDisableCustomClassTweaks(zzDefaults, zzDynClass);
                 }   
@@ -122,8 +124,10 @@ function Timer()
 
         // xxClientMessage("zzState 1 set to: "@zzState);  // Debug
         // xxClientMessage("First check starting...");   // Debug
+
         zzCheckKey = int(RandRange(1,2004318072));
         xxCheck(zzCheckKey,zzActor,zzSettings,zzProps);
+        
         SetTimer(zzActor.CheckTimeOut,false);
         return;
     }
@@ -138,18 +142,21 @@ function Timer()
         {
             if (zzActor.bStealthMode) // Check if stealth mode is enabled
                 {
-                    zzState = 4; // No more checks needed
-
-                    // xxClientMessage("zzState 2 set to: "@zzState);  // Debug
-
+                    if (zzActor.bCheckClientPackages) // Check if client packages are enabled
+                    {
+                        zzState = 4; // Go to Client Packages Check
+                    }
+                    else
+                    {
+                        zzState = 5; // Go to Stealth Mode Report
+                    }
                     SetTimer(3,false);    
                 }
             else  // Schedule next check
              {
                 zzState = 0;
 
-                // xxClientMessage("zzState 2 set to: "@zzState);  // Debug
-                // xxClientMessage("Restarting checks...");  // Debug
+                // xxClientMessage("Restarting checks in state 2...");  // Debug
 
                 SetTimer(zzActor.CheckInterval-zzActor.CheckTimeOut+RandRange(1,10),false);
                 return;
@@ -166,50 +173,60 @@ function Timer()
             return;
         }
     }
-    else if (zzState == 4) // Only entering this state when stealth mode is enabled
+    else if (zzState == 4) // State Check Client Packages is true
     {
-        if (zzStealthTweaksFound > 0) // If tweaks were found, log a report
+        xxCheckClientPackages();
+
+        // xxClientMessage("Restarting checks in state 4...");  // Debug
+
+        zzState = 5; // Go to Stealth Mode Report
+
+        SetTimer(zzActor.CheckInterval-zzActor.CheckTimeOut+RandRange(1,10),false);
+        return;
+    }
+    else if (zzState == 5) // Stealth mode state to keep logging reports
+    {
+        if (zzStealthTweaksFound > zzStealthTweaksLogged) // If new tweaks were found log reports
         {
-            TimeStamp = Level.Day$"-"$Level.Month$"-"$Level.Year$" / "$Level.Hour$":"$Level.Minute$":"$Level.Second;
-            
-            /* // Debug report using ClientMessage
-            xxClientMessage("+------------------------------------------------------------------------------+");
-            xxClientMessage("|                           TweakBlocker Report                                    |");
-            xxClientMessage("+------------------------------------------------------------------------------+");
-            xxClientMessage("Player Name: "$zzPRI.PlayerName$"");
-            xxClientMessage("Player IP: "$zzPlayerIP$"");
-            xxClientMessage("TimeStamp: "$TimeStamp$"");
-            xxClientMessage("Tweaks Found: "$zzStealthTweaksFound$"");
-            xxClientMessage("+------------------------------------------------------------------------------+");
-            xxClientMessage("|                            Tweaks List                                            |");
-            xxClientMessage("+------------------------------------------------------------------------------+");
-             */
+            zzTimeStamp = Level.Day$"-"$Level.Month$"-"$Level.Year$" / "$Level.Hour$":"$Level.Minute$":"$Level.Second;
+
+            if (bStoppedLog == true) zzLog.StartLog(); // Start the log if the old one is not running
+
             xxLog("+------------------------------------------------------------------------------+");
-            xxLog("|                           TweakBlocker Report                                |");
+            xxLog("|                       TweakBlocker Stealth Mode Report                       |");
             xxLog("+------------------------------------------------------------------------------+");
             xxLog("PlayerName.............: "$zzPRI.PlayerName$"");
             xxLog("PlayerIP...............: "$zzPlayerIP$"");
             xxLog("PlayerClient...........: "$zzClientVersion$"");
-            xxLog("TimeStamp..............: "$TimeStamp$"");
-            xxLog("TweaksFound............: "$zzStealthTweaksFound$"");
+            xxLog("TimeStamp..............: "$zzTimeStamp$"");
+            xxLog("TweaksFound............: "$zzStealthTweaksFound-zzStealthTweaksLogged$"");
             xxLog("+------------------------------------------------------------------------------+");
             xxLog("|                                Tweaks List                                   |");
             xxLog("+------------------------------------------------------------------------------+");
-            xxLog("+------------------------------------------------------------------------------+");
             
-            for (i = 0; i < zzStealthTweaksFound; i++)
+            for (i = zzStealthTweaksLogged; i < zzStealthTweaksFound; i++)
                 {
                     // xxClientMessage(""$zzDetectedTweakClassNames[i]$" -> "$zzDetectedTweakPropery[i]$""); //Debug
                     xxLog(""$zzDetectedTweakClassNames[i]$" -> "$zzDetectedTweakPropery[i]$"");
+                    zzStealthTweaksLogged++;
                 }
 
-            // xxClientMessage("+------------------------------------------------------------------------------+");  //Debug
             xxLog("+------------------------------------------------------------------------------+");
-
-            zzLog.StopLog();
-
+            
+            zzState = 0; // Go back to Idle and restart checks
+            
+            zzLog.StopLog(); // Stop the log - convert .tmp to .log
+            bStoppedLog = true; // Save log state
+            SetTimer(zzActor.CheckInterval-zzActor.CheckTimeOut+RandRange(1,10),false);
             return;
-       }
+        }
+        else
+        {
+            // xxClientMessage("No new tweaks logged, restarting checks...");  // Debug
+            zzState = 0; // Go back to Idle and restart checks
+            SetTimer(zzActor.CheckInterval-zzActor.CheckTimeOut+RandRange(1,10),false);
+            return;
+        }
     }
 }
 
@@ -254,6 +271,55 @@ function xxGetProperties()
     }
 }
 
+// ============================================================================================
+// xxCheckClientPackages ~ Retrieves non-default client-side packages
+// ============================================================================================
+
+simulated function xxCheckClientPackages()
+{
+    local Actor zzActor;
+    local name ClientPackages[128];
+    local int i, j;
+
+    foreach AllActors(class'Actor', zzActor)
+    {
+        if (zzActor.Role == ROLE_Authority && !zzActor.bStatic && !zzActor.bNoDelete && zzActor.Class.Outer.Name != 'Botpack' && zzActor.Class.Outer.Name != 'UnrealShare' && zzActor.Class.Outer.Name != 'UnrealI' && zzActor.Class.Outer.Name != Level.Outer.Name)
+        {
+            for (j = 0; j < i; j++)
+                if (ClientPackages[j] == zzActor.Class.Outer.Name)
+                    break;
+            if (j == i)
+            {
+                ClientPackages[i++] = zzActor.Class.Outer.Name;
+                xxFindClientRoguePackages(zzActor.Class.Outer.Name);
+            }
+        }
+    }
+}
+
+// ============================================================================================
+// xxFindClientRoguePackages ~ Checks for rogue packages that the server doesn't have
+// ============================================================================================
+
+simulated function xxFindClientRoguePackages(coerce string ClientPackages)
+{ 
+    if (IsInPackageMap(ClientPackages, true) == false)
+            {
+                if (zzActor.bStealthMode)
+                {
+                    xxStealthAddTweak("Illegal Client Package Found",ClientPackages);
+                }
+                else
+                {
+                    xxKickPlayer("Illegal Package Found: "$ClientPackages$"");
+                }
+            }
+}
+
+// =============================================================================
+// xxGetClientVersion ~ Retrieves the client version
+// =============================================================================
+
 simulated function xxGetClientVersion()
 {
     local string zzClientVer;
@@ -262,6 +328,10 @@ simulated function xxGetClientVersion()
 
     xxSaveClientVersion(zzClientVer);
 }
+
+// =============================================================================
+// xxGetClientVersion ~ Saves the client version to a server variable
+// =============================================================================
 
 simulated function xxSaveClientVersion(string zzClientVer)
 {
@@ -287,6 +357,13 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
 
     zzTweaksFound = 0;
     zzStealthTweaksFound = 0;
+
+    // Check for rogue packages
+
+    if (zzA.bCheckClientPackages)
+    {
+        xxCheckClientPackages();
+    }
 
     // RMode checks
     if (zzA.bCheckRMode)
@@ -453,7 +530,7 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
              // Player LODBias Check
             if (zzA.bCheckLODBias)
             {  
-                zzLODBias = zzA.GetLODBias(zzPP);
+                zzLODBias = zzA.xxGetLODBias(zzPP);
 
                 if (float(zzLODBias) > zzA.bMaxAllowedLODBias) // Convert lodBias to float before comparing
                 {
@@ -578,17 +655,21 @@ simulated function xxCheck(int zzKey, TBActor zzA, TBSettings zzS, TBPlayerDispl
 // ========================================================================================
 simulated function xxStealthAddTweak(string zzClassName, string zzTweakedProperty)
 {
+    local int i;
 
     if (zzActor.bStealthMode) // Add tweak to DetectedTweaks array if stealth mode is enabled
         {
+            for (i = 0; i < zzStealthTweaksFound; i++)
+            {
+                if (zzDetectedTweakClassNames[i] == zzClassName && zzDetectedTweakPropery[i] == zzTweakedProperty)
+                {
+                    return;
+                }
+            }
             zzDetectedTweakClassNames[zzStealthTweaksFound] = zzClassName;
             zzDetectedTweakPropery[zzStealthTweaksFound] = zzTweakedProperty;
+            zzStealthTweaksFound++;
         }
-
-    //PlayerPawn(Owner).ClientMessage(""$zzDetectedTweakClassNames[zzStealthTweaksFound]$" -> "$zzDetectedTweakPropery[zzStealthTweaksFound]$"");  //Debug
-
-    zzStealthTweaksFound++;
-    //PlayerPawn(Owner).ClientMessage("zzStealthTweaksFound: "@zzStealthTweaksFound);  //Debug
 }
 
 
@@ -1132,7 +1213,7 @@ simulated function xxDisableBaseClassTweaks(TBDefaults zzD)
                 zzUT_Eightball.RotationRate = zzD.zzUT_EightballDefaults.RotationRate;
             }
         }
-    
+
     foreach Level.AllActors(class'UT_FlakCannon', zzUT_FlakCannon)
         {
             if (zzUT_FlakCannon != none)
@@ -1876,6 +1957,6 @@ final static function string Replace(string Haystack, string Needle, string Subs
 // =============================================================================
 defaultproperties
 {
-    zzMyVer="v07"
+    zzMyVer="v08"
     NetPriority=10.0
 }
