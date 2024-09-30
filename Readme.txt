@@ -26,6 +26,8 @@ TweakBlocker can work in Stealth Mode. When this mode is enabled, no messages ar
 
 * Unzip the contents of this zip archive to the system folder of your server
 
+* Your UT server needs to be running the 469d patch or newer. Get the latest patch here: https://github.com/OldUnreal/UnrealTournamentPatches/releases
+
 * Open the UnrealTournament.ini file of your server. Then browse to the 
   [Engine.GameEngine] section and add the following lines:
 
