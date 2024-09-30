@@ -151,7 +151,7 @@ v0.1:
 
 4) Authors
 ----------
-Original Author: AnthraX
+Original Author: AnthraX https://github.com/stijn-volckaert/TweakBlocker
 
 Modified and actively developed by rX
 
